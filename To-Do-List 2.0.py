@@ -10,7 +10,8 @@ def menu():
     print("\n")
     print("1: Add Task")
     print("2: Show Tasks")
-    print("3: Mark Tasks as Complete")
+    print("3: Mark Task as Complete")
+    print("4: Delete Task")
     print("0. Quit Program")
     print("------------------------")
 
@@ -35,7 +36,28 @@ def menu_selection(command, tasks):
         
         case 3:
             print("Mark Task as Complete")
+            for i, (task, status) in enumerate(tasks, start=1):
+                print(f"{i}. {task} - {status}")
+            task_index = int(input("Enter the number of that ask you want to complete: ")) - 1
+            if task_index >= 0 and task_index < len(tasks):
+                tasks[task_index] = (tasks[task_index][0], "Complete")
+                print(f"Task '{tasks[task_index][0]}' has been marked as complete.")
+            else:
+                print("Invalid task number.")
             return True
+        
+        case 4:
+            print("Delete Task")
+            for i, (task, status) in enumerate(tasks, start=1):
+                print(f"{i}. {task} - {status}")
+            task_index = int(input("Enter the number of that task you want to delete: ")) - 1
+            if task_index >= 0 and task_index < len(tasks):
+                deleted_task = tasks.pop(task_index)
+                print(f"Task '{deleted_task[0]}' has been deleted.")
+            else:
+                print("Invalid task number.")
+            return True
+
         case _:
             print("Incorrect entry. Please choose correct action")
             command
