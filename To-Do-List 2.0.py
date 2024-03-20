@@ -5,10 +5,13 @@ print("Welcome to To-Do-List 2.0 Application")
 def menu():
     print("------------------------")
     print("MENU")
+    print("\n")
     print("Please enter the corresponding number of the action you want to take")
     print("\n")
-    print("1: Add task")
-    print("0. Quit program")
+    print("1: Add Task")
+    print("2: Show Tasks")
+    print("3: Mark Tasks as Complete")
+    print("0. Quit Program")
     print("------------------------")
 
 
@@ -20,11 +23,19 @@ def menu_selection(command, tasks):
             
         case 1:
             item = input("Please enter task to add to your list: ")
-            tasks.append((item, "Incomplete"))
+            tasks.append((item, "Incomplete")) # Modifying the tasks list
+            print("\n")
             print(f"The task {item} has been added to your list")
-            print(tasks)
             return True
         
+        case 2:
+            for i, (task, status) in enumerate(tasks, start=1):
+                print(f"{i}. {task} - {status}")
+            return True
+        
+        case 3:
+            print("Mark Task as Complete")
+            return True
         case _:
             print("Incorrect entry. Please choose correct action")
             command
