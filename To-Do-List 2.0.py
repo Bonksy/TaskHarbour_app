@@ -1,3 +1,7 @@
+from datetime import datetime, timedelta
+#import schedule
+import time
+
 print("Welcome to To-Do-List 2.0 Application")
 
 #FUNCTIONS
@@ -18,11 +22,37 @@ def menu():
 
 def add_task(tasks):
     task_name = input("Please enter task to add to your list: ")
-    due_date = input("Please enter due date (DD-MM-YYYY): ")
-    reminder_date = input("Please enter reminder date (YYYY-MM-DD): ")
-    tasks.append((task_name, "Incomplete", due_date, reminder_date)) # Modifying the tasks list
-    print("\n")
-    print(f"The task {task_name} has been added to your list with due date {due_date} & reminder date {reminder_date}.")
+
+    while True:
+        due_date_input = input("Please enter due date (DD/MM/YYYY): ")
+        try:
+            due_date = datetime.strptime(due_date_input, "%d/%m/%Y")
+            if due_date < datetime.now():
+                print("Due date cannot be in the past. Please enter a valid due date.")
+            else:
+                break
+        except ValueError:
+            print("Invalid due date format. Please enter the date in DD/MM/YYYY format.")
+            due_date_input = input("Please enter due date (DD/MM/YYYY): ")
+
+          
+    while True:
+        reminder_date_input = input("Please enter reminder date (DD/MM/YYYY): ")
+
+        try:
+            reminder_date = datetime.strptime(reminder_date_input, "%d/%m/%Y")
+            if reminder_date <= due_date:
+                    tasks.append((task_name, "Incomplete", due_date, reminder_date)) # Modifying the tasks list
+                    print("\n")
+                    print(f"The task {task_name} has been added to your list with due date {due_date.strftime('%d/%m/%Y')} & reminder date {reminder_date.strftime('%d/%m/%Y')}.")
+                    break
+            else:
+                print("Reminder date cannot be after due date. Please enter a valid reminder date")            
+        except ValueError:
+            print("Invalid reminder date format. Please enter the date in DD/MM/YYYY format.")
+            reminder_date_input = input("Please enter reminder date (DD/MM/YYYY): ")
+            
+
 
 def display_tasks(tasks):
     print("Show Task")
@@ -88,7 +118,6 @@ def menu_selection(command, tasks):
         case 6:
             print("Quitting Application")
             return False
-
 
         case _:
             print("Incorrect entry. Please choose correct action")
