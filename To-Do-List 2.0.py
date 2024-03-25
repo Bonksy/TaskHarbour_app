@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
-#import schedule
+import schedule
 import time
+from plyer import notification
 
 print("Welcome to To-Do-List 2.0 Application")
 
@@ -20,8 +21,49 @@ def menu():
     print("6. Quit Program")
     print("------------------------")
 
-def add_task(tasks):
+# Function to send reminders for tasks
+def send_reminders(tasks):
+    current_time = datetime.now()
+
+    # Iterate through tasks and check for reminders
+    for task in tasks:
+        task_name, status, due_date, reminder_date = task
+        if status == "Incomplete" and current_time.date() == reminder_date.date() and current_time.hour == 12:
+            # Send reminder notification
+            notification_title = f"Reminder: Task '{task_name}' is due today"
+            notification_message = f"Don't forget to complete '{task_name}' today!"
+            notification.notify(
+                title=notification_title,
+                message=notification_message,
+                app_name="TaskHarbor"
+            )
+
+def add_task(tasks, categories):
     task_name = input("Please enter task to add to your list: ")
+
+    print("Available Categories")
+    for category in categories:
+        print(category)
+
+    while True:
+        category = input("Please enter the category for the task, or type 'new' to create a new category: ")
+        if category.lower() == 'new':
+            category = input("Please enter the name for the new category: ")
+            if not category.strip():  # Check if category is empty or whitespace
+                print("Category name cannot be empty. Please enter a valid category name.")
+            elif not category.isalnum():  # Check if category contains only alphanumeric characters
+                print("Invalid category name. Category name should contain only letters and numbers.")
+            elif len(category) > 50:  # Check if category name exceeds maximum length
+                print("Category name is too long. Please enter a shorter name.")
+            elif category in categories:
+                print("Category already exists. Please choose a different name or select from the existing categories. ")
+            else:
+                categories.append(category)
+                break
+        elif category in categories:
+            break
+        else:
+            print("Invalid category. Please choose form the existing categories or create a new one.")
 
     while True:
         due_date_input = input("Please enter due date (DD/MM/YYYY): ")
@@ -42,7 +84,7 @@ def add_task(tasks):
         try:
             reminder_date = datetime.strptime(reminder_date_input, "%d/%m/%Y")
             if reminder_date <= due_date:
-                    tasks.append((task_name, "Incomplete", due_date, reminder_date)) # Modifying the tasks list
+                    tasks.append((task_name, "Incomplete", due_date, reminder_date, category)) # Modifying the tasks list
                     print("\n")
                     print(f"The task {task_name} has been added to your list with due date {due_date.strftime('%d/%m/%Y')} & reminder date {reminder_date.strftime('%d/%m/%Y')}.")
                     break
@@ -52,12 +94,10 @@ def add_task(tasks):
             print("Invalid reminder date format. Please enter the date in DD/MM/YYYY format.")
             reminder_date_input = input("Please enter reminder date (DD/MM/YYYY): ")
             
-
-
 def display_tasks(tasks):
-    print("Show Task")
-    for i, (task, status, due_date, reminder_date) in enumerate(tasks, start=1):
-        print(f"{i}. {task} - {status} - Due: {due_date} - Reminder: {reminder_date}")
+    print("Show Tasks")
+    for i, (task, status, due_date, reminder_date, category) in enumerate(tasks, start=1):
+        print(f"{i}. {task} - {status} - Due: {due_date} - Reminder: {reminder_date} - Category: {category}")
 
 def mark_complete(tasks):
     display_tasks(tasks)
@@ -126,8 +166,12 @@ def menu_selection(command, tasks):
           
 
 #EMPTY LISTS
+        
 tasks = []
-
+categories = {"Personal": [],
+              "Work": [],
+              "Home": []
+              }
 while True:
 
     menu()
